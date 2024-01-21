@@ -1,0 +1,32 @@
+from flask import render_template, jsonify, Response
+
+from yacut import app, db
+
+
+class InvalidAPIUsage(Exception):
+    status_code = 400
+
+    def __init__(self, message: str, status_code: int = None) -> None:
+        super().__init__()
+        self.message = message
+        if status_code is not None:
+            self.status_code = status_code
+
+    def to_dict(self) -> dict:
+        return dict(message=self.message)
+
+
+@app.errorhandler(InvalidAPIUsage)
+def invalid_api_usage(error: InvalidAPIUsage) -> Response:
+    return jsonify(error.to_dict()), error.status_code
+
+
+@app.errorhandler(404)
+def page_not_found(error: Exception) -> Response:
+    return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_error(error: Exception) -> Response:
+    db.session.rollback()
+    return render_template('500.html'), 500
