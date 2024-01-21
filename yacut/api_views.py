@@ -1,13 +1,15 @@
+from http import HTTPStatus
+
 from flask import jsonify, request
 
-from yacut import app, db
+from yacut import app
+from yacut.error_handlers import InvalidAPIUsage
 from yacut.models import URLMap
 from yacut.views import get_unique_short_id
-from yacut.error_handlers import InvalidAPIUsage
 
 
-@app.route('/api/id/', methods=['POST'])
-def url_create() -> jsonify:
+@app.route('/api/id/', methods=('POST',))
+def url_create() -> tuple:
     data = request.get_json()
     if not data:
         raise InvalidAPIUsage('Отсутствует тело запроса')
@@ -25,15 +27,14 @@ def url_create() -> jsonify:
         raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
     url = URLMap()
     url.from_dict(data)
-    db.session.add(url)
-    db.session.commit()
-    return jsonify(url.to_dict()), 201
+    url.db_save()
+    return jsonify(url.to_dict()), HTTPStatus.CREATED
 
 
-@app.route('/api/id/<short_id>/', methods=['GET'])
-def get_original_url(short_id) -> jsonify:
+@app.route('/api/id/<short_id>/', methods=('GET',))
+def get_original_url(short_id) -> tuple:
     url = URLMap().query.filter_by(short=short_id).first()
     if not url:
         raise InvalidAPIUsage('Указанный id не найден', 404)
     original_url = url.original
-    return jsonify({'url': original_url}), 200
+    return jsonify({'url': original_url}), HTTPStatus.OK

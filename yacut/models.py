@@ -1,15 +1,19 @@
 from datetime import datetime
-import string
 
 from flask import url_for
 
+from settings import ALL_CHARS, MAX_CUSTOM_ID_LENGTH, MAX_ORIGINAL_LINK_LENGTH
 from yacut import db
 
 
 class URLMap(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    original = db.Column(db.String(128), nullable=False)
-    short = db.Column(db.String(16), unique=True, nullable=False)
+    original = db.Column(db.String(MAX_ORIGINAL_LINK_LENGTH), nullable=False)
+    short = db.Column(
+        db.String(MAX_CUSTOM_ID_LENGTH),
+        unique=True,
+        nullable=False
+    )
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
     def to_dict(self) -> dict:
@@ -32,6 +36,10 @@ class URLMap(db.Model):
         if len(short_id) > 16:
             return False
         for char in short_id:
-            if char not in string.ascii_letters and char not in string.digits:
+            if char not in ALL_CHARS:
                 return False
         return True
+
+    def db_save(self):
+        db.session.add(self)
+        db.session.commit()
