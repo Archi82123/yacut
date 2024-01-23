@@ -2,7 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, URLField
 from wtforms.validators import URL, DataRequired, Length, Optional
 
-from settings import MAX_CUSTOM_ID_LENGTH, MAX_ORIGINAL_LINK_LENGTH, MIN_LENGTH
+from yacut.settings import (MAX_CUSTOM_ID_LENGTH, MAX_ORIGINAL_LINK_LENGTH,
+                            MIN_LENGTH)
 
 
 class URLMapForm(FlaskForm):

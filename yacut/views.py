@@ -2,10 +2,10 @@ import random
 
 from flask import Response, flash, redirect, render_template
 
-from settings import ALL_CHARS
 from yacut import app
 from yacut.forms import URLMapForm
 from yacut.models import URLMap
+from yacut.settings import ALL_CHARS
 
 
 def get_unique_short_id() -> str:

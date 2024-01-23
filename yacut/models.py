@@ -2,8 +2,9 @@ from datetime import datetime
 
 from flask import url_for
 
-from settings import ALL_CHARS, MAX_CUSTOM_ID_LENGTH, MAX_ORIGINAL_LINK_LENGTH
 from yacut import db
+from yacut.settings import (ALL_CHARS, MAX_CUSTOM_ID_LENGTH,
+                            MAX_ORIGINAL_LINK_LENGTH)
 
 
 class URLMap(db.Model):
