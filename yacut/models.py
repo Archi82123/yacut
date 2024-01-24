@@ -34,7 +34,7 @@ class URLMap(db.Model):
             setattr(self, 'short', data['custom_id'])
 
     def valid_short_check(short_id: str) -> bool:
-        if len(short_id) > 16:
+        if len(short_id) > MAX_CUSTOM_ID_LENGTH:
             return False
         for char in short_id:
             if char not in ALL_CHARS:
